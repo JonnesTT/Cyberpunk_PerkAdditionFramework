@@ -1,4 +1,4 @@
-//the following was provided freely by Nexus user rmk1234, thank you friend!
+//the following was provided by Nexus user rmk1234, thank you friend!
 
 // Vanilla ResetNewPerks only loops over the original enum range (< Count), so perks appended
 // to gamedataNewPerkType by PerkAdditionFramework are never sold or locked on attribute reset.
