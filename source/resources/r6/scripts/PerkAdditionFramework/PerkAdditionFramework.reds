@@ -61,13 +61,16 @@ public class PerkAdditionFramework extends ScriptableService
         for perkRecord in perkRecords 
         {
             let enumNameToTest : CName = perkRecord.EnumName();
-            if !ArrayContains(usedEnumNames, enumNameToTest)
+            if !(this.IsReservedPlaceholder(enumNameToTest))
             {
-                ArrayPush(usedEnumNames, enumNameToTest);
-            } 
-            else
-            {
-                PAFLogWarning(s"Slot \(enumNameToTest) was assigned multiple times.");
+                if !ArrayContains(usedEnumNames, enumNameToTest)
+                {
+                    ArrayPush(usedEnumNames, enumNameToTest);
+                } 
+                else
+                {
+                    PAFLog(s"Enum Name \(enumNameToTest) was assigned multiple times. This indicates that multiple mods attempt to add a new perk using the same EnumName. The one last in the load order will take effect.");
+                }
             }
         }
     }   
@@ -83,13 +86,17 @@ public class PerkAdditionFramework extends ScriptableService
             for perkRecord in perkRecords 
             {
                 let slotToTest : wref<NewPerkSlot_Record> = perkRecord.Slot();
-                if !ArrayContains(usedSlots, slotToTest)
-                {
-                    ArrayPush(usedSlots, slotToTest);
-                } 
-                else
-                {
-                    PAFLogWarning(s"Slot \(slotToTest) in \(attribute.EnumName()) was assigned multiple times.");
+
+                if !(this.IsReservedPlaceholder(slotToTest.EnumName()))
+                    {
+                        if !ArrayContains(usedSlots, slotToTest)
+                    {
+                        ArrayPush(usedSlots, slotToTest);
+                    } 
+                    else
+                    {
+                        PAFLog(s"Slot \(slotToTest) in \(attribute.EnumName()) was assigned multiple times. This indicates that multiple mods attempt to add a new perk in same slot. The one last in the load order will take effect.");
+                    }
                 }
             }
         }
@@ -119,4 +126,16 @@ public class PerkAdditionFramework extends ScriptableService
         return recordsOut;
     }
     
+    private func IsReservedPlaceholder(nameToTest : CName) -> Bool
+    {
+        let stringToTest : String = NameToString(nameToTest);
+        if ( UnicodeStringEqual(stringToTest, "none") || UnicodeStringEqual(stringToTest, "None") || UnicodeStringEqual(stringToTest, "") || UnicodeStringEqual(stringToTest, " ") || UnicodeStringEqual(stringToTest, "-")|| UnicodeStringEqual(stringToTest, "/"))
+        {
+            return true;
+        } 
+        else
+        {
+            return false;
+        }
+    }
 }
