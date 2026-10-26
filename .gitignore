@@ -1,0 +1,10 @@
+
+
+#ignore layout and some such
+layout.xml
+
+#ignore the cache
+.projectFiles/
+
+#ignore the release
+*.zip
